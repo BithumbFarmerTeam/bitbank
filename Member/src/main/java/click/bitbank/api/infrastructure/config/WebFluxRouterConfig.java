@@ -1,9 +1,9 @@
 package click.bitbank.api.infrastructure.config;
 
 import click.bitbank.api.application.response.MemberLoginResponse;
-import click.bitbank.api.application.response.MemberRegistrationResponse;
+import click.bitbank.api.application.response.MemberSignupResponse;
 import click.bitbank.api.presentation.member.MemberHandler;
-import click.bitbank.api.presentation.member.request.MemberRegistrationRequest;
+import click.bitbank.api.presentation.member.request.MemberSignupRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,20 +32,19 @@ public class WebFluxRouterConfig implements WebFluxConfigurer {
 
     @RouterOperations({
         @RouterOperation(
-            path = "/member/admin/teacherRegistration",
+            path = "/auth/signup",
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE },
-            headers = { HttpHeaders.AUTHORIZATION },
             beanClass = MemberHandler.class,
             method = RequestMethod.POST,
             beanMethod = "memberRegistration",
             operation = @Operation(
-                description = "강사 등록 API",
-                operationId = "teacherRegistration",
+                description = "일반 회원 가입 API",
+                operationId = "signup",
                 requestBody = @RequestBody(
                     content = @Content(
                         schema = @Schema(
-                            implementation = MemberRegistrationRequest.class,
+                            implementation = MemberSignupRequest.class,
                             required = true
                         )
                     )
@@ -55,38 +54,7 @@ public class WebFluxRouterConfig implements WebFluxConfigurer {
                         responseCode = "201",
                         content = @Content(
                             schema = @Schema(
-                                implementation = MemberRegistrationResponse.class,
-                                required = true
-                            )
-                        )
-                    )
-                }
-            )
-        ),
-        @RouterOperation(
-            path = "/member/studentRegistration",
-            consumes = { MediaType.APPLICATION_JSON_VALUE },
-            produces = { MediaType.APPLICATION_JSON_VALUE },
-            beanClass = MemberHandler.class,
-            method = RequestMethod.POST,
-            beanMethod = "memberRegistration",
-            operation = @Operation(
-                description = "학생 회원 가입 API",
-                operationId = "studentRegistration",
-                requestBody = @RequestBody(
-                    content = @Content(
-                        schema = @Schema(
-                            implementation = MemberRegistrationRequest.class,
-                            required = true
-                        )
-                    )
-                ),
-                responses = {
-                    @ApiResponse(
-                        responseCode = "201",
-                        content = @Content(
-                            schema = @Schema(
-                                implementation = MemberRegistrationResponse.class,
+                                implementation = MemberSignupResponse.class,
                                 required = true
                             )
                         )
@@ -130,11 +98,10 @@ public class WebFluxRouterConfig implements WebFluxConfigurer {
     public RouterFunction<ServerResponse> memberRouterBuilder(MemberHandler memberHandler) {
 
         return RouterFunctions.route()
-            .path("/member", memberBuilder ->
+            .path("/auth", memberBuilder ->
                 memberBuilder.nest(accept(MediaType.APPLICATION_JSON), builder ->
                     builder
-                        .POST("/admin/teacherRegistration", memberHandler::memberRegistration) // 강사 등록 (관리자만)
-                        .POST("/studentRegistration", memberHandler::memberRegistration) // 학생 회원 가입
+                        .POST("/signup", memberHandler::signup) // 학생 회원 가입
                         .POST("/login", memberHandler::login) // 로그인
                 )
             )

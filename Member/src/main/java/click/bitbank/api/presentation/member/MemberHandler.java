@@ -10,9 +10,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import click.bitbank.api.application.response.MemberLoginResponse;
-import click.bitbank.api.domain.model.member.MemberType;
 import click.bitbank.api.application.response.MemberInfoResponse;
-import click.bitbank.api.application.response.MemberRegistrationResponse;
+import click.bitbank.api.application.response.MemberSignupResponse;
 
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
@@ -24,44 +23,27 @@ public class MemberHandler {
     private final KafkaProducerService kafkaProducerService;
 
     /**
-     * [관리자 전용 경로로 접근한 경우]
-     * 강사 등록
-     * --> '사이트 운영자'는 강의 컨테츠를 업로드할 '강사' 회원을 생성할 수 있다.
-     *
-     * [일반 경로로 접근한 경우]
-     * 학생 회원 가입
-     * --> 강의를 수강하고자 하는 사람은 '학생'으로 회원 가입이 가능하다.
-     *
-     * @param request :
-     *      [관리자 전용 경로로 접근한 경우] 등록할 강사 정보
-     *      [일반 경로로 접근한 경우] 가입할 학생 정보
-     * @return Mono<ServerResponse> :
-     *      [관리자 전용 경로로 접근한 경우] 등록된 강사 정보
-     *      [일반 경로로 접근한 경우] 등록된 학생 회원 정보
+     * 일반 회원 가입
+     * @param request : 가입할 회원 정보
+     * @return Mono<ServerResponse> : 등록한 회원 정보
      */
-    public Mono<ServerResponse> memberRegistration(ServerRequest request) {
+    public Mono<ServerResponse> signup(ServerRequest request) {
 
-        // 요청한 경로에 따라 회원 유형 분기 처리
-        MemberType memberType = request.path().contains(MemberType.S.getName().toLowerCase()) ?
-            MemberType.S
-            : MemberType.N;
-
-        Mono<MemberRegistrationResponse> response = memberApplicationService.memberRegistration(request, memberType)
+        Mono<MemberSignupResponse> response = memberApplicationService.signup(request)
             .subscribeOn(Schedulers.boundedElastic())
             .doOnSuccess(memberRegistrationResponse -> {
                 // Kafka Message 발행
-//                kafkaProducerService.sendMessage(
-//                    String.format("%s Event >>> %s(memberId: %d) 생성",
-//                        request.path(),
-//                        memberType.getDescription(),
-//                        memberRegistrationResponse.getMemberId()
-//                    )
-//                );
+                kafkaProducerService.sendMessage(
+                    String.format("%s Event >>> %s(memberId: %d) 생성",
+                        request.path(),
+                        memberRegistrationResponse.getMemberId()
+                    )
+                );
             });
 
         return ok()
             .contentType(MediaType.APPLICATION_JSON)
-            .body(response, MemberRegistrationResponse.class);
+            .body(response, MemberSignupResponse.class);
     }
 
     /**

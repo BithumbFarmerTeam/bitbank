@@ -11,6 +11,7 @@ public enum ExceptionMessage {
 
     IsRequiredRequest("BadRequestException", "Request를 전달해주세요."),
     IsRequiredMemberId("BadRequestException", "전달된 회원 고유번호가 없습니다."),
+    IsRequiredMemberLoginId("BadRequestException", "아이디를 입력해주세요"),
     IsRequiredMemberName("BadRequestException", "이름을 입력해 주세요."),
     IsRequiredMemberPassword("BadRequestException", "비밀번호를 입력해 주세요."),
     IsRequiredMemberType("BadRequestException", "회원 유형을 선택해 주세요."),
