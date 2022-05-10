@@ -1,8 +1,8 @@
 package click.bitbank.api.presentation.member;
 
 import click.bitbank.api.application.response.MemberLoginResponse;
-import click.bitbank.api.application.response.MemberRegistrationResponse;
-import click.bitbank.api.presentation.member.request.MemberRegistrationRequest;
+import click.bitbank.api.application.response.MemberSignupResponse;
+import click.bitbank.api.presentation.member.request.MemberSignupRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class MemberHandlerTest {
     @Test
     void teacherRegistration() {
 
-        MemberRegistrationRequest request = MemberRegistrationRequest.builder()
+        MemberSignupRequest request = MemberSignupRequest.builder()
             .memberName("홍강사")
             .memberPassword("1234")
             .build();
@@ -57,7 +57,7 @@ class MemberHandlerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk()
-            .expectBody(MemberRegistrationResponse.class)
+            .expectBody(MemberSignupResponse.class)
             .value(memberRegistrationResponse -> {
                 Assertions.assertInstanceOf(Integer.class, memberRegistrationResponse.getMemberId());
             });
@@ -69,7 +69,7 @@ class MemberHandlerTest {
     @Test
     void studentRegistration() {
 
-        MemberRegistrationRequest request = MemberRegistrationRequest.builder()
+        MemberSignupRequest request = MemberSignupRequest.builder()
             .memberName("홍학생")
             .memberPassword("1234")
             .build();
@@ -81,7 +81,7 @@ class MemberHandlerTest {
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk()
-            .expectBody(MemberRegistrationResponse.class)
+            .expectBody(MemberSignupResponse.class)
             .value(memberRegistrationResponse -> {
                 Assertions.assertInstanceOf(Integer.class, memberRegistrationResponse.getMemberId());
             });

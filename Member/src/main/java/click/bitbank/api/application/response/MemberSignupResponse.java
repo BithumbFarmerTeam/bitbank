@@ -8,7 +8,7 @@ import click.bitbank.api.presentation.shared.response.CreatedSuccessResponse;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRegistrationResponse extends CreatedSuccessResponse {
+public class MemberSignupResponse extends CreatedSuccessResponse {
 
     private int memberId; // 회원 고유번호
 }

@@ -19,6 +19,9 @@ public class Member {
     @Column(value = "memberId")
     private int memberId; // 회원 고유번호
 
+    @Column(value = "memberLoginId")
+    private String memberLoginId; // 회원 아이디
+
     @Column(value = "memberType")
     private MemberType memberType; // 회원 유형
 

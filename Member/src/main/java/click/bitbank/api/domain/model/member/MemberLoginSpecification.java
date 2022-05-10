@@ -1,5 +1,6 @@
 package click.bitbank.api.domain.model.member;
 
+import click.bitbank.api.domain.repository.MemberRepository;
 import click.bitbank.api.infrastructure.exception.status.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

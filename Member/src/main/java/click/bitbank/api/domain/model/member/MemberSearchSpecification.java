@@ -1,5 +1,6 @@
 package click.bitbank.api.domain.model.member;
 
+import click.bitbank.api.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

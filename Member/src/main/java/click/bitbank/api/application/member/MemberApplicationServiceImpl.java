@@ -9,15 +9,14 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 import click.bitbank.api.application.response.MemberInfoResponse;
 import click.bitbank.api.application.response.MemberLoginResponse;
-import click.bitbank.api.application.response.MemberRegistrationResponse;
+import click.bitbank.api.application.response.MemberSignupResponse;
 import click.bitbank.api.domain.model.member.MemberLoginSpecification;
 import click.bitbank.api.domain.model.member.MemberSaveSpecification;
 import click.bitbank.api.domain.model.member.MemberSearchSpecification;
-import click.bitbank.api.domain.model.member.MemberType;
 import click.bitbank.api.infrastructure.exception.status.BadRequestException;
 import click.bitbank.api.infrastructure.exception.status.ExceptionMessage;
 import click.bitbank.api.presentation.member.request.MemberLoginRequest;
-import click.bitbank.api.presentation.member.request.MemberRegistrationRequest;
+import click.bitbank.api.presentation.member.request.MemberSignupRequest;
 
 @Slf4j
 @Service
@@ -32,18 +31,17 @@ public class MemberApplicationServiceImpl implements MemberApplicationService {
     /**
      * 회원 계정 생성
      * @param serverRequest : 전달된 Request
-     * @param memberType : 회원 유형
      * @return Mono<MemberRegistrationResponse> : 저장된 회원 정보
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Mono<MemberRegistrationResponse> memberRegistration(ServerRequest serverRequest, MemberType memberType) {
+    public Mono<MemberSignupResponse> signup(ServerRequest serverRequest) {
 
-        return serverRequest.bodyToMono(MemberRegistrationRequest.class).flatMap(
+        return serverRequest.bodyToMono(MemberSignupRequest.class).flatMap(
             request -> {
                 request.verify(); // Request 유효성 검사
 
-                return memberSaveSpecification.memberExistCheckAndRegistration(request, memberType); // 회원 계정 생성
+                return memberSaveSpecification.memberExistCheckAndRegistration(request); // 회원 계정 생성
             }
         ).switchIfEmpty(Mono.error(new BadRequestException(ExceptionMessage.IsRequiredRequest.getMessage())));
     }
@@ -72,9 +70,4 @@ public class MemberApplicationServiceImpl implements MemberApplicationService {
         return memberSearchSpecification.getMemberInfo(memberId);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void studentToLectureShowInfoAlimtalk(String lectureName) {
-        log.info("===== 학생에게 강의 노출 여부 알림톡 발송 완료 =====");
-    }
 }
